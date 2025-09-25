@@ -1,31 +1,6 @@
-// Temporalmente deshabilitado para deploy solo frontend
-const API_BASE_URL = null;
+const API_BASE_URL = import.meta.env.PROD ? '/.netlify/functions' : 'http://localhost:5001/api';
 
 const apiRequest = async (endpoint, options = {}) => {
-  // Mock para frontend-only
-  if (!API_BASE_URL) {
-    console.log('Modo demo - sin backend');
-    
-    // Simular login
-    if (endpoint === '/auth/login') {
-      const { email, password } = JSON.parse(options.body || '{}');
-      if (email === 'demo@shop-stev.com' && password === 'demo123') {
-        return {
-          token: 'demo-token',
-          user: {
-            id: '1',
-            name: 'Usuario Demo',
-            email: 'demo@shop-stev.com',
-            role: 'user'
-          }
-        };
-      }
-      throw new Error('Credenciales inválidas. Usa: demo@shop-stev.com / demo123');
-    }
-    
-    // Otras APIs mock
-    return { message: 'Funcionalidad no disponible en modo demo' };
-  }
   
   // Código original para cuando hay backend
   const token = localStorage.getItem('shop-stev-token');
@@ -59,12 +34,12 @@ const apiRequest = async (endpoint, options = {}) => {
 };
 
 export const authAPI = {
-  register: (userData) => apiRequest('/auth/register', {
+  register: (userData) => apiRequest('/auth-register', {
     method: 'POST',
     body: JSON.stringify(userData),
   }),
   
-  login: (credentials) => apiRequest('/auth/login', {
+  login: (credentials) => apiRequest('/auth-login', {
     method: 'POST',
     body: JSON.stringify(credentials),
   }),

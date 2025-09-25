@@ -26,16 +26,13 @@ const LoginPage = ({ onLogin }) => {
     setLoading(true);
     setError('');
 
+    console.log('=== LOGIN ATTEMPT ===');
+    console.log('Form data:', formData);
+
     try {
-      // Timeout de 10 segundos
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Timeout: El servidor tardó demasiado en responder')), 10000)
-      );
-      
-      const response = await Promise.race([
-        authAPI.login(formData),
-        timeoutPromise
-      ]);
+      console.log('Calling authAPI.login...');
+      const response = await authAPI.login(formData);
+      console.log('Login response:', response);
       
       localStorage.setItem('shop-stev-token', response.token);
       onLogin(response.user);
