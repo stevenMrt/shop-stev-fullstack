@@ -1,12 +1,6 @@
 const API_BASE_URL = import.meta.env.PROD ? '/api' : 'http://localhost:5001/api';
 
 const apiRequest = async (endpoint, options = {}) => {
-  // Fallback cuando no hay backend disponible
-  if (!API_BASE_URL) {
-    console.log('API no disponible, usando datos mock');
-    return { message: 'Funcionalidad no disponible sin backend' };
-  }
-  
   const token = localStorage.getItem('shop-stev-token');
   
   const config = {
@@ -18,14 +12,23 @@ const apiRequest = async (endpoint, options = {}) => {
     ...options,
   };
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message || 'Error en la petición');
+  try {
+    console.log('API Request:', `${API_BASE_URL}${endpoint}`);
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('API Error Response:', response.status, errorText);
+      throw new Error(`Error ${response.status}: ${errorText || 'Error en el servidor'}`);
+    }
+    
+    const data = await response.json();
+    console.log('API Success:', data);
+    return data;
+  } catch (error) {
+    console.error('API Request Failed:', error);
+    throw new Error(error.message || 'Error de conexión con el servidor');
   }
-
-  return data;
 };
 
 export const authAPI = {

@@ -27,12 +27,22 @@ const LoginPage = ({ onLogin }) => {
     setError('');
 
     try {
-      const response = await authAPI.login(formData);
+      // Timeout de 10 segundos
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Timeout: El servidor tardó demasiado en responder')), 10000)
+      );
+      
+      const response = await Promise.race([
+        authAPI.login(formData),
+        timeoutPromise
+      ]);
+      
       localStorage.setItem('shop-stev-token', response.token);
       onLogin(response.user);
       navigate('/home');
     } catch (err) {
-      setError(err.message);
+      console.error('Login error:', err);
+      setError(err.message || 'Error de conexión. Verifica tu internet.');
     } finally {
       setLoading(false);
     }
