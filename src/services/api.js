@@ -1,8 +1,8 @@
-const API_BASE_URL = import.meta.env.PROD 
-  ? 'https://tu-app-railway.up.railway.app/api' 
-  : 'http://localhost:5001/api';
+// SIN BACKEND - SOLO FRONTEND
+const API_BASE_URL = null;
 
 const apiRequest = async (endpoint, options = {}) => {
+  throw new Error('Funcionalidad no disponible - Solo modo catálogo');
   
   // Código original para cuando hay backend
   const token = localStorage.getItem('shop-stev-token');
