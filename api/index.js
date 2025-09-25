@@ -24,10 +24,13 @@ if (!mongoose.connection.readyState) {
 }
 
 // Rutas
-app.use('/auth', authRoutes);
-app.use('/products', productsRoutes);
-app.use('/cart', cartRoutes);
-app.use('/orders', ordersRoutes);
-app.use('/favorites', favoritesRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/products', productsRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/orders', ordersRoutes);
+app.use('/api/favorites', favoritesRoutes);
 
-export default app;
+// Handler para Vercel
+export default (req, res) => {
+  return app(req, res);
+};
