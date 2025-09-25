@@ -1,4 +1,6 @@
-const API_BASE_URL = import.meta.env.PROD ? '/.netlify/functions' : 'http://localhost:5001/api';
+const API_BASE_URL = import.meta.env.PROD 
+  ? 'https://tu-app-railway.up.railway.app/api' 
+  : 'http://localhost:5001/api';
 
 const apiRequest = async (endpoint, options = {}) => {
   
@@ -34,12 +36,12 @@ const apiRequest = async (endpoint, options = {}) => {
 };
 
 export const authAPI = {
-  register: (userData) => apiRequest('/auth-register', {
+  register: (userData) => apiRequest('/auth/register', {
     method: 'POST',
     body: JSON.stringify(userData),
   }),
   
-  login: (credentials) => apiRequest('/auth-login', {
+  login: (credentials) => apiRequest('/auth/login', {
     method: 'POST',
     body: JSON.stringify(credentials),
   }),
