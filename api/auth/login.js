@@ -1,14 +1,4 @@
-import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import User from '../../backend/models/User.js';
-
-// Conexión a MongoDB
-if (!mongoose.connection.readyState) {
-  mongoose.connect(process.env.MONGODB_URI);
-}
-
-export default async function handler(req, res) {
+export default function handler(req, res) {
   // CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -22,39 +12,21 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Método no permitido' });
   }
 
-  try {
-    const { email, password } = req.body;
-
-    // Buscar usuario
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: 'Credenciales inválidas' });
-    }
-
-    // Verificar contraseña
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Credenciales inválidas' });
-    }
-
-    // Generar token
-    const token = jwt.sign(
-      { userId: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
-
-    res.status(200).json({
-      token,
+  // Simulación temporal sin base de datos
+  const { email, password } = req.body;
+  
+  // Usuario de prueba
+  if (email === 'test@test.com' && password === '123456') {
+    return res.status(200).json({
+      token: 'fake-jwt-token-for-testing',
       user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role
+        id: '1',
+        name: 'Usuario Test',
+        email: 'test@test.com',
+        role: 'user'
       }
     });
-  } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ message: 'Error del servidor' });
   }
+  
+  res.status(400).json({ message: 'Credenciales inválidas. Usa test@test.com / 123456' });
 }
