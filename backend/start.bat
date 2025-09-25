@@ -1,0 +1,3 @@
+@echo off
+echo 🚀 Iniciando Shop-Stev Backend...
+npm run dev

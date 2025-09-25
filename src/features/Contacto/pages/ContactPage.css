@@ -1,0 +1,37 @@
+/* ContactPage.css - Estilos específicos adicionales */
+
+.contact-page {
+  min-height: 80vh;
+}
+
+.contact-form {
+  position: relative;
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top: 2px solid #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.form-group select option {
+  background: var(--panel);
+  color: var(--text);
+}
+
+.info-item:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+  .contact-info {
+    order: 2;
+  }
+  
+  .contact-form-container {
+    order: 1;
+  }
+}

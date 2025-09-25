@@ -1,0 +1,99 @@
+const API_BASE_URL = import.meta.env.PROD ? '/api' : 'http://localhost:5001/api';
+
+const apiRequest = async (endpoint, options = {}) => {
+  // Fallback cuando no hay backend disponible
+  if (!API_BASE_URL) {
+    console.log('API no disponible, usando datos mock');
+    return { message: 'Funcionalidad no disponible sin backend' };
+  }
+  
+  const token = localStorage.getItem('shop-stev-token');
+  
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
+      ...options.headers,
+    },
+    ...options,
+  };
+
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || 'Error en la petición');
+  }
+
+  return data;
+};
+
+export const authAPI = {
+  register: (userData) => apiRequest('/auth/register', {
+    method: 'POST',
+    body: JSON.stringify(userData),
+  }),
+  
+  login: (credentials) => apiRequest('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify(credentials),
+  }),
+  
+  getMe: () => apiRequest('/auth/me'),
+};
+
+export const productsAPI = {
+  getAll: (filters = {}) => {
+    const params = new URLSearchParams(filters);
+    return apiRequest(`/products?${params}`);
+  },
+  
+  getById: (id) => apiRequest(`/products/${id}`),
+  
+  addReview: (productId, reviewData) => apiRequest(`/products/${productId}/reviews`, {
+    method: 'POST',
+    body: JSON.stringify(reviewData),
+  }),
+};
+
+export const cartAPI = {
+  get: () => apiRequest('/cart'),
+  
+  add: (productId, quantity = 1) => apiRequest('/cart/add', {
+    method: 'POST',
+    body: JSON.stringify({ productId, quantity }),
+  }),
+  
+  update: (productId, quantity) => apiRequest('/cart/update', {
+    method: 'PUT',
+    body: JSON.stringify({ productId, quantity }),
+  }),
+  
+  remove: (productId) => apiRequest(`/cart/remove/${productId}`, {
+    method: 'DELETE',
+  }),
+  
+  clear: () => apiRequest('/cart/clear', {
+    method: 'DELETE',
+  }),
+};
+
+export const ordersAPI = {
+  create: (orderData) => apiRequest('/orders/create', {
+    method: 'POST',
+    body: JSON.stringify(orderData),
+  }),
+  
+  getMyOrders: () => apiRequest('/orders/my-orders'),
+  
+  getById: (id) => apiRequest(`/orders/${id}`),
+};
+
+export const favoritesAPI = {
+  get: () => apiRequest('/favorites'),
+  
+  toggle: (productId) => apiRequest('/favorites/toggle', {
+    method: 'POST',
+    body: JSON.stringify({ productId }),
+  }),
+};
